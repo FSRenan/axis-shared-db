@@ -32,7 +32,7 @@ public class Client {
         Get get;
         Post post = new Post();
 
-        post.select("Cliente", new ArrayList(Arrays.asList("Nome")), "");
+        post.select("Cliente", new ArrayList(Arrays.asList("endereco")), "");
 
         //Sending commands
         Conect.send(socket, post);

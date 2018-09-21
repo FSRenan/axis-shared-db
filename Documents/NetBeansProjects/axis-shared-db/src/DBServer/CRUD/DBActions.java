@@ -22,10 +22,13 @@ public class DBActions implements Serializable {
                 insert(post, get);
                 break;
             case const_Select:
+                select(post, get);
                 break;
             case const_Update:
+                update(post, get);
                 break;
             case const_Delete:
+                delete(post, get);
                 break;
         }
     }
@@ -33,6 +36,17 @@ public class DBActions implements Serializable {
     public void insert(Post post, Get get) {
         //Tabelas sao pastas, colunas sao arquivos, backp sera copiar arquivo, na hr
         //de recuperar ele copia
+    }
+
+    public void select(Post post, Get get) {
+
+    }
+
+    public void update(Post post, Get get) {
+
+    }
+
+    public void delete(Post post, Get get) {
 
     }
 
