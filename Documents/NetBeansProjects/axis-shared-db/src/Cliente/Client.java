@@ -3,13 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package axis.shared.db;
+package Cliente;
 
 /**
  *
  * @author rferreira
  */
-public class Cliente {
+public class Client {
 
     /**
      * @param args the command line arguments
