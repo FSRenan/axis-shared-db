@@ -26,19 +26,19 @@ public class DBServer {
     public static void main(String[] args) {
         //Initialize DBServer Socket
         new DBServer();
-       
+
         Post post;
         Get get = new Get();
-        
+
         if (connect()) {
             //Receive Cliente request
             post = (Post) Conect.receive(client_socket);
             //Setting Return
             get.setStatus(0);
-            get.setResultado("Numero enviado: " + post.getOperacao());
+            get.setMsg(" select " + post.getValues().get(0) + " From " + post.getTable());
 
             Conect.send(client_socket, get);
-            System.out.println("BDSERVER RECEIVED: " + post.getOperacao());
+            System.out.println("BDSERVER RECEIVED: values(" + post.getValues().get(0) + ")");
 
             try {
                 client_socket.close();
