@@ -8,15 +8,16 @@ import java.io.Serializable;
  */
 public class Get implements Serializable {
 
-    private String resultado;
+    private String select;
+    private String msg;
     private int status;
 
-    public String getResultado() {
-        return resultado;
+    public String getSelect() {
+        return select;
     }
 
-    public void setResultado(String resultado) {
-        this.resultado = resultado;
+    public void setSelect(String select) {
+        this.select = select;
     }
 
     public int getStatus() {
@@ -27,4 +28,17 @@ public class Get implements Serializable {
         this.status = status;
     }
 
+    public String getMsg() {
+        return msg;
+    }
+
+    public void setMsg(String msg) {
+        this.msg = msg;
+    }
+
+    /*
+     *0-Operacao bem sucedida
+     *1-Erro 
+     *
+     */
 }
