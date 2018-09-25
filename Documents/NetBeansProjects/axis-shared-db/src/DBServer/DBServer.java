@@ -1,6 +1,9 @@
 package DBServer;
 
-import Conection.*;
+import Connection.Connect;
+import Connection.Get;
+import Connection.Post;
+import DBServer.CRUD.DBActions;
 import java.io.*;
 import java.net.*;
 
@@ -14,7 +17,6 @@ public class DBServer {
     static Socket client_socket;
 
     public DBServer() {
-
         try {
             server_socket = new ServerSocket(9600);
             System.out.println("BDServer Created");
@@ -24,28 +26,33 @@ public class DBServer {
     }
 
     public static void main(String[] args) {
+        DBActions dbActions = new DBActions();
+        
         //Initialize DBServer Socket
         new DBServer();
 
         Post post;
         Get get = new Get();
+        while (connect()) {
 
-        if (connect()) {
             //Receive Cliente request
-            post = (Post) Conect.receive(client_socket);
+            post = (Post) Connect.receive(client_socket);
+            System.out.println("exe");
+            dbActions.execute(post, get);
+            System.out.println("passou");
             //Setting Return
             get.setStatus(0);
-            get.setMsg(" select " + post.getValues().get(0) + " From " + post.getTable());
+            get.setMsg("Server value: " + post.getValues().get(0) + " Table: " + post.getTable() + " MSG: " + get.getMsg());
 
-            Conect.send(client_socket, get);
+            Connect.send(client_socket, get);
             System.out.println("BDSERVER RECEIVED: values(" + post.getValues().get(0) + ")");
 
-            try {
-                client_socket.close();
-                server_socket.close();
-            } catch (IOException ex) {
-                System.out.println("*BDServer: Socket close failed >> ERROR: " + ex);
-            }
+//            try {
+//                client_socket.close();
+//                server_socket.close();
+//            } catch (IOException ex) {
+//                System.out.println("*BDServer: Socket close failed >> ERROR: " + ex);
+//            }
         }
     }
 

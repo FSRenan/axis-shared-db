@@ -1,9 +1,10 @@
 //Cliente já envia o comando ao servidor e retorna o objeto get
+package Client;
 
-package Cliente;
-
+import Connection.Connect;
+import Connection.Get;
+import Connection.Post;
 import java.net.Socket;
-import Conection.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,15 +33,16 @@ public class Client {
         Get get;
         Post post = new Post();
 
-        post.select("Cliente", new ArrayList(Arrays.asList("endereco")), "");
+        // post.select("Cliente", new ArrayList(Arrays.asList("luma")), "");
+        post.insert("Person", new ArrayList(Arrays.asList("reeeee")));
 
         //Sending commands
-        Conect.send(socket, post);
+        Connect.send(socket, post);
 
         //Get BDServer return
-        get = (Get) Conect.receive(socket);
-        
-       System.out.println("*Cliente* Mensagem armazenada pelo Servidor: " + get.getMsg());
+        get = (Get) Connect.receive(socket);
+
+        System.out.println("*Cliente* Mensagem armazenada pelo Servidor: " + get.getMsg());
 
         try {
             socket.close();

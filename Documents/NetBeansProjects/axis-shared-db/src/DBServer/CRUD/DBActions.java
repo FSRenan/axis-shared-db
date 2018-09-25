@@ -1,6 +1,8 @@
 package DBServer.CRUD;
 
-import Conection.*;
+import Connection.Get;
+import Connection.Post;
+import DBServer.FileManager;
 import java.io.Serializable;
 
 /**
@@ -14,11 +16,13 @@ public class DBActions implements Serializable {
     private final int const_Select = 1;
     private final int const_Update = 2;
     private final int const_Delete = 3;
+    private FileManager fileManager = new FileManager();
 
     public void execute(Post post, Get get) {
 
         switch (post.getCommand()) {
             case const_Insert:
+                System.out.println("entrou insert");
                 insert(post, get);
                 break;
             case const_Select:
@@ -36,6 +40,8 @@ public class DBActions implements Serializable {
     public void insert(Post post, Get get) {
         //Tabelas sao pastas, colunas sao arquivos, backp sera copiar arquivo, na hr
         //de recuperar ele copia
+      //  fileManager.writeInsert(post.getTable(), post.getValues());
+        get.setMsg("Sucesso no insert");
     }
 
     public void select(Post post, Get get) {

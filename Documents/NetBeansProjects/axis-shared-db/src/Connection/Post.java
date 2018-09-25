@@ -1,4 +1,4 @@
-package Conection;
+package Connection;
 
 import DBServer.CRUD.DBActions;
 import java.io.Serializable;

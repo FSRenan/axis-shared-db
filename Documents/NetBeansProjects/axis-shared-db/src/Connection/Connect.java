@@ -1,4 +1,4 @@
-package Conection;
+package Connection;
 
 import java.net.*;
 import java.io.*;
@@ -7,7 +7,7 @@ import java.io.*;
  *
  * @author rferreira
  */
-public class Conect {
+public class Connect {
 
     public static void send(Socket socket, Object object) {
         try {
