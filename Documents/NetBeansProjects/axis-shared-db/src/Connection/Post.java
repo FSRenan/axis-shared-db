@@ -9,9 +9,9 @@ import java.util.ArrayList;
  * @author rferreira
  */
 public class Post implements Serializable {
-    
+
     DBActions actions = new DBActions();
-    
+
     //Operators
     private ArrayList values;
     private String table;
@@ -25,14 +25,15 @@ public class Post implements Serializable {
         this.values = values;
         this.command = actions.getConst_Insert();
     }
+
     //Values for select
-    public void select(String table, ArrayList values, String where) {
+    public void select(String table, String where) {
         this.table = table;
-        this.values = values;
         this.where = where;
         this.command = actions.getConst_Select();
-        
+
     }
+
     //Values for update
     public void update(String table, ArrayList values, String where) {
         this.table = table;
@@ -40,6 +41,7 @@ public class Post implements Serializable {
         this.where = where;
         this.command = actions.getConst_Update();
     }
+
     //Values for delete
     public void delete(String table, String where) {
         this.table = table;

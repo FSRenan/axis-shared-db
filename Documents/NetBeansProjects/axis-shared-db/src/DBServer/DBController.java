@@ -11,12 +11,12 @@ import java.net.*;
  *
  * @author rferreira
  */
-public class DBServer {
+public class DBController {
 
     static ServerSocket server_socket;
     static Socket client_socket;
 
-    public DBServer() {
+    public DBController() {
         try {
             server_socket = new ServerSocket(9600);
             System.out.println("BDServer Created");
@@ -29,23 +29,20 @@ public class DBServer {
         DBActions dbActions = new DBActions();
         
         //Initialize DBServer Socket
-        new DBServer();
+        new DBController();
 
         Post post;
         Get get = new Get();
         while (connect()) {
 
-            //Receive Cliente request
+            //Receive Client request
             post = (Post) Connect.receive(client_socket);
-            System.out.println("exe");
+            
+            //Execute Client request
             dbActions.execute(post, get);
-            System.out.println("passou");
+            
             //Setting Return
-            get.setStatus(0);
-            //get.setMsg("Server value: " + post.getValues().get(0) + " Table: " + post.getTable() + " MSG: " + get.getMsg());
-
             Connect.send(client_socket, get);
-            System.out.println("BDSERVER RECEIVED: values(" + post.getValues().get(0) + ")");
 
 //            try {
 //                client_socket.close();

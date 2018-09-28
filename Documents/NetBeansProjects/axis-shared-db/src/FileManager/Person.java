@@ -1,12 +1,12 @@
-package DBServer;
+package FileManager;
 
 import java.io.Serializable;
 
 /**
  *
- * @author lab1504p2
+ * @author rferreira
  */
-public class Person  implements Serializable{
+public class Person implements Serializable {
 
     private int age;
     private String cpf;
@@ -44,5 +44,9 @@ public class Person  implements Serializable{
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getAllInfo() {
+        return "\nName: " + this.name + "\nAge: " + this.age + "\nCPF: " + this.cpf + "\n";
     }
 }

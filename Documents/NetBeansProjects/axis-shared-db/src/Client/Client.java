@@ -33,16 +33,15 @@ public class Client {
         Get get;
         Post post = new Post();
 
-        // post.select("Cliente", new ArrayList(Arrays.asList("luma")), "");
-        //post.insert("Person", new ArrayList(Arrays.asList("21", "799898898", "Renan")));
-        
-        post.select("Person", new ArrayList(Arrays.asList("21", "3789", "48787teste")), "");
+        post.select("Person", "");
+        //post.insert("Person", new ArrayList(Arrays.asList("50", "cpfm", "Marcilio")));
+
         //Sending commands
         Connect.send(socket, post);
 
         //Get BDServer return
         get = (Get) Connect.receive(socket);
-        
+
         System.out.println("*Cliente* Retorno server: \n" + get.getMsg());
 
         try {
