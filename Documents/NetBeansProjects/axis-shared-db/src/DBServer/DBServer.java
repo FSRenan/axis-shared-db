@@ -42,7 +42,7 @@ public class DBServer {
             System.out.println("passou");
             //Setting Return
             get.setStatus(0);
-            get.setMsg("Server value: " + post.getValues().get(0) + " Table: " + post.getTable() + " MSG: " + get.getMsg());
+            //get.setMsg("Server value: " + post.getValues().get(0) + " Table: " + post.getTable() + " MSG: " + get.getMsg());
 
             Connect.send(client_socket, get);
             System.out.println("BDSERVER RECEIVED: values(" + post.getValues().get(0) + ")");

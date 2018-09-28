@@ -37,15 +37,19 @@ public class DBActions implements Serializable {
         }
     }
 
+    //Age, cpf, name
     public void insert(Post post, Get get) {
         //Tabelas sao pastas, colunas sao arquivos, backp sera copiar arquivo, na hr
         //de recuperar ele copia
-      //  fileManager.writeInsert(post.getTable(), post.getValues());
+        fileManager.writeInsert(post.getTable(), post.getValues());
         get.setMsg("Sucesso no insert");
     }
 
+    //Select
     public void select(Post post, Get get) {
-
+        System.out.println("************chamou***********");
+       get.setMsg(fileManager.ReadSelect(post.getTable(), post.getValues(), post.getWhere())); 
+        System.out.println("Passou select: " + fileManager.ReadSelect(post.getTable(), post.getValues(), post.getWhere()));
     }
 
     public void update(Post post, Get get) {

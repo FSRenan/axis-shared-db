@@ -31,6 +31,7 @@ public class Post implements Serializable {
         this.values = values;
         this.where = where;
         this.command = actions.getConst_Select();
+        
     }
     //Values for update
     public void update(String table, ArrayList values, String where) {
