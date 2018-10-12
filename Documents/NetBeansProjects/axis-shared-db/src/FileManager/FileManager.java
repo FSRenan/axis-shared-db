@@ -5,34 +5,85 @@
  */
 package FileManager;
 
+import Connection.Where;
+
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+
+import java.util.Arrays;
 import java.util.List;
 
 /**
  *
  * @author rferreira
  */
+
+
 public class FileManager implements Serializable {
 
     private FileInfo fileInfo = new FileInfo();
+    private final String columnAge = "age.txt";
+    private final String columnCpf = "cpf.txt";
+    private final String columnName = "name.txt";
+
+    //Update values
+    public ArrayList<Person> updatePerson(String table, ArrayList<String> values, Where where) {
+        ArrayList<Person> persons = getPersons(table);
+        switch (where.getColumn()) {
+            case columnAge:
+                for (int i = 0; i < persons.size(); i++) {
+                    if (persons.get(i).getAge() == Integer.parseInt(where.getValue())) {
+                        persons.set(i, new Person(Integer.parseInt(values.get(0)), values.get(1), values.get(2)));
+                    }
+                }
+                break;
+            case columnCpf:
+                for (int i = 0; i < persons.size(); i++) {
+                    if (persons.get(i).getCpf().equals(where.getValue())) {
+                        persons.set(i, new Person(Integer.parseInt(values.get(0)), values.get(1), values.get(2)));
+                    }
+                }
+                break;
+            case columnName:
+                for (int i = 0; i < persons.size(); i++) {
+                    if (persons.get(i).getName().equals(where.getValue())) {
+                        persons.set(i, new Person(Integer.parseInt(values.get(0)), values.get(1), values.get(2)));
+                    }
+                }
+                break;
+        }
+        return persons;
+
+    }
 
     //Values for insert
-    public void writeInsert(String table, ArrayList<String> values) {
+    public void writeInsert(String table, ArrayList<String> values, boolean concatFileInfo) {
         try {
             List<String> fileNames = fileInfo.getFileNames(table);
             for (int i = 0; i < fileNames.size(); i++) {
-                FileWriter fw = new FileWriter(fileInfo.getFilePath(table, fileNames.get(i)), true);
+                FileWriter fw = new FileWriter(fileInfo.getFilePath(table, fileNames.get(i)), concatFileInfo);
+
                 fw.append(values.get(i) + "" + "\r\n");
                 fw.flush();
                 fw.close();
             }
         } catch (IOException ex) {
             System.out.println("*FileManager: writeInsert failed >> ERROR: " + ex);
+        }
+    }
+
+    public void writePersons(ArrayList<Person> persons, String table) {
+
+        boolean firstPersonInserted = false;
+        //Só grava o ultimo, o false deve estar no primeiro
+        for (Person person : persons) {
+            writeInsert(table, new ArrayList(Arrays.asList(person.getAge() + "", person.getCpf(), person.getName())), firstPersonInserted);
+            firstPersonInserted = true;
         }
     }
 
@@ -65,15 +116,16 @@ public class FileManager implements Serializable {
 
             while (line != null) {
                 switch (fileName) {
-                    case "age.txt":
+                    case columnAge:
+
                         Person person = new Person();
                         person.setAge(Integer.parseInt(line));
                         persons.add(indexPerson, person);
                         break;
-                    case "cpf.txt":
+                    case columnCpf:
                         persons.get(indexPerson).setCpf(line);
                         break;
-                    case "name.txt":
+                    case columnName:
                         persons.get(indexPerson).setName(line);
                         break;
                 }
@@ -84,6 +136,21 @@ public class FileManager implements Serializable {
             System.out.println("*FileManager: addPersonInfoToArray failed >> ERROR: " + ex);
         }
 
+    }
+    
+   //Clean all the files
+    public void cleanFiles(String table) {
+        try {
+            List<String> fileNames = fileInfo.getFileNames(table);
+            for (int i = 0; i < fileNames.size(); i++) {
+                FileWriter fw = new FileWriter(fileInfo.getFilePath(table, fileNames.get(i)));
+                fw.write("");
+                fw.flush();
+                fw.close();
+            }
+        } catch (IOException ex) {
+            System.out.println("*FileManager: writeInsert failed >> ERROR: " + ex);
+        }
     }
 
 }

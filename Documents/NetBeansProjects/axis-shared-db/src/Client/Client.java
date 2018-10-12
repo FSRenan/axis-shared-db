@@ -4,6 +4,7 @@ package Client;
 import Connection.Connect;
 import Connection.Get;
 import Connection.Post;
+import Connection.Where;
 import java.net.Socket;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -28,12 +29,17 @@ public class Client {
 
     public static void main(String[] args) {
         //Initialize Client Socket
+        //Initialize Client Socket
         new Client();
 
         Get get;
         Post post = new Post();
 
-        post.select("Person", "");
+        //post.select("Person", null);
+        //post.insert("Person", new ArrayList(Arrays.asList("3333", "3333", "re2")));
+        //post.update("Person", new ArrayList(Arrays.asList("35", "cpfRenanVelho", "REVelho")), new Where("name.txt","re2"));
+        post.delete("Person", null);
+        //post.select("Person", null);
         //post.insert("Person", new ArrayList(Arrays.asList("50", "cpfm", "Marcilio")));
 
         //Sending commands

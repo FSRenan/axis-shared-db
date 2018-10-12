@@ -16,7 +16,7 @@ public class Post implements Serializable {
     private ArrayList values;
     private String table;
     private String column;
-    private String where;
+    private Where where;
     private int command;
 
     //Values for insert
@@ -27,15 +27,14 @@ public class Post implements Serializable {
     }
 
     //Values for select
-    public void select(String table, String where) {
+    public void select(String table, Where where) {
         this.table = table;
         this.where = where;
         this.command = actions.getConst_Select();
-
     }
 
     //Values for update
-    public void update(String table, ArrayList values, String where) {
+    public void update(String table, ArrayList values, Where where) {
         this.table = table;
         this.values = values;
         this.where = where;
@@ -43,7 +42,7 @@ public class Post implements Serializable {
     }
 
     //Values for delete
-    public void delete(String table, String where) {
+    public void delete(String table, Where where) {
         this.table = table;
         this.where = where;
         this.command = actions.getConst_Delete();
@@ -61,12 +60,13 @@ public class Post implements Serializable {
         return column;
     }
 
-    public String getWhere() {
+    public Where getWhere() {
         return where;
     }
 
     public int getCommand() {
         return command;
     }
+
 
 }

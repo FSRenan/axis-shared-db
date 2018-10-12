@@ -7,6 +7,9 @@ import FileManager.Person;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import java.util.Arrays;
+
+
 /**
  *
  * @author rferreira
@@ -43,8 +46,8 @@ public class DBActions implements Serializable {
     public void insert(Post post, Get get) {
         //Tabelas sao pastas, colunas sao arquivos, backp sera copiar arquivo, na hr
         //de recuperar ele copia
-        fileManager.writeInsert(post.getTable(), post.getValues());
-        get.setMsg("Sucesso no insert");
+        fileManager.writeInsert(post.getTable(), post.getValues(), true);
+        get.setMsg("\n **SUCESSO NO INSERT");
     }
 
     //Select
@@ -62,10 +65,15 @@ public class DBActions implements Serializable {
 
     public void update(Post post, Get get) {
 
+        ArrayList<Person> persons = fileManager.updatePerson(post.getTable(), post.getValues(), post.getWhere());
+        fileManager.writePersons(persons, post.getTable());
+        
+        get.setMsg("\n **SUCESSO NO UPDATE");
     }
 
     public void delete(Post post, Get get) {
-
+        fileManager.cleanFiles(post.getTable());
+        get.setMsg("\n **SUCESSO NO DELETE");
     }
 
     public int getConst_Insert() {
