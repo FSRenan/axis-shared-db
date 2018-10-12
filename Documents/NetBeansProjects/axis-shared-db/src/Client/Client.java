@@ -36,10 +36,10 @@ public class Client {
         Post post = new Post();
 
         //post.select("Person", null);
-        //post.insert("Person", new ArrayList(Arrays.asList("3333", "3333", "re2")));
+        //post.insert("Person", new ArrayList(Arrays.asList("9999", "3333", "re2")));
         //post.update("Person", new ArrayList(Arrays.asList("35", "cpfRenanVelho", "REVelho")), new Where("name.txt","re2"));
-        post.delete("Person", null);
-        //post.select("Person", null);
+        //post.delete("Person", null);
+        post.select("Person", null);
         //post.insert("Person", new ArrayList(Arrays.asList("50", "cpfm", "Marcilio")));
 
         //Sending commands

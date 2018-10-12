@@ -153,4 +153,16 @@ public class FileManager implements Serializable {
         }
     }
 
+    public String getColumnAge() {
+        return columnAge;
+    }
+
+    public String getColumnCpf() {
+        return columnCpf;
+    }
+
+    public String getColumnName() {
+        return columnName;
+    }
+
 }
