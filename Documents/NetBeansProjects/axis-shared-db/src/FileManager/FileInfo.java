@@ -10,12 +10,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
  * @author Renan Ferreira
  */
-public class FileInfo implements Serializable  {
+public class FileInfo implements Serializable {
 
-    private final String path = System.getProperty("user.dir") + "\\Data";
+    private static String path = System.getProperty("user.dir") + "\\Data";
+
+    public static String getPath() {
+        return path;
+    }
+
+    public static void setPath(String path) {
+        FileInfo.path = path;
+    }
 
     //Return a List with all the files in a folder
     public List<String> getFileNames(String table) {
@@ -28,7 +35,7 @@ public class FileInfo implements Serializable  {
                 fileNames.add(file.getFileName() + "");
             }
         } catch (IOException ex) {
-            System.out.println("*FileManager: getFileNames failed >> ERROR: " + ex);
+            System.err.println("*FileManager: getFileNames failed >> ERROR: " + ex);
         }
 
         return fileNames;

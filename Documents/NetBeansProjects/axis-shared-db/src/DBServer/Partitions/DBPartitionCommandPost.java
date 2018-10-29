@@ -5,27 +5,49 @@
  */
 package DBServer.Partitions;
 
+import FileManager.Person;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
- *
  * @author Renan Ferreira
  */
-public class DBPartitionCommandPost  implements Serializable{
+public class DBPartitionCommandPost implements Serializable {
 
-    private ArrayList<String> files = new ArrayList();
+    //0-Solicita as informacoes
+    //1-Atualiza informacoes
+    private ArrayList<Person> persons;
+    private int partitionRequest;
+    private String table;
 
-    public DBPartitionCommandPost(ArrayList<String> files) {
-        this.files = files;
+    public DBPartitionCommandPost(int partitionRequest, String table, ArrayList<Person> persons) {
+        this.partitionRequest = partitionRequest;
+        this.table = table;
+        this.persons = persons;
     }
 
-    public ArrayList<String> getFiles() {
-        return files;
+    public int getPartitionRequest() {
+        return partitionRequest;
     }
 
-    public void setFiles(ArrayList<String> files) {
-        this.files = files;
+    public void setPartitionRequest(int partitionRequest) {
+        this.partitionRequest = partitionRequest;
     }
 
+    public String getTable() {
+        return table;
+    }
+
+    public void setTable(String table) {
+        this.table = table;
+    }
+
+    public ArrayList<Person> getPersons() {
+        return persons;
+    }
+
+    public void setPersons(ArrayList<Person> persons) {
+        this.persons = persons;
+    }
 }

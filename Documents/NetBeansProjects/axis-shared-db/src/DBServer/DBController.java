@@ -4,25 +4,28 @@ import Connection.Connect;
 import Connection.Get;
 import Connection.Post;
 import DBServer.CRUD.DBActions;
+import DBServer.Partitions.DBPartitionActions;
 import DBServer.Partitions.DBPartitionCommandGet;
 import DBServer.Partitions.DBPartitionCommandPost;
-import FileManager.FileManager;
+import FileManager.*;
+
 import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
- *
  * @author rferreira
  */
 public class DBController {
 
     static ServerSocket controller_socker_receive;
-    static Socket socker_send_partition1;
-    static Socket socker_send_partition2;
-    static Socket socker_send_partition3;
+    static Socket socker_send_partition;
     static Socket client_socket;
+
+    private static final int getPartitionsInfo = 0;
+    private static final int updatePartitionsInfo = 1;
+    private static FileManager fileManager = new FileManager();
 
     public DBController() {
         try {
@@ -30,16 +33,18 @@ public class DBController {
             System.out.println("BDServer Created");
 
             //Conection to send info
-            socker_send_partition1 = new Socket("localhost", 9700);
-            socker_send_partition2 = new Socket("localhost", 9800);
-            socker_send_partition3 = new Socket("localhost", 9900);
+            //socker_send_partition1 = new Socket("localhost", 9700);
+            //PARTICOES NOVA
+            //socker_send_partition2 = new Socket("localhost", 9800);
+            //socker_send_partition3 = new Socket("localhost", 9900);
 
         } catch (IOException ex) {
-            System.out.println("*DBServer: Creating server failed >> ERROR: " + ex);
+            System.err.println("*DBServer: Creating server failed >> ERROR: " + ex);
+            ex.printStackTrace();
         }
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         DBActions dbActions = new DBActions();
 
         //Initialize DBServer Socket
@@ -47,20 +52,21 @@ public class DBController {
 
         Post post;
         Get get = new Get();
-        checkDBPartitions();
+
+        //checkDBPartitions();
 
         while (connect()) {
             //Receive Client request
             post = (Post) Connect.receive(client_socket);
 
             //Create files from partitions
-            checkDBPartitions();
-            
+            checkDBPartitions(post.getTable());
+
             //Execute Client request
             dbActions.execute(post, get);
 
-            //Update DBPartitions and clean local files
-            updateDBPartitions();
+            //Update Partitions
+
 
             //Setting Return
             Connect.send(client_socket, get);
@@ -74,6 +80,7 @@ public class DBController {
         }
     }
 
+    //Conexao com cliente
     static boolean connect() {
         boolean ret;
         try {
@@ -86,25 +93,45 @@ public class DBController {
         return ret;
     }
 
-    public static void checkDBPartitions() {
-        FileManager fileManager = new FileManager();
+    public static void checkDBPartitions(String table) throws IOException {
+        ArrayList<Person> persons = new ArrayList();
         DBPartitionCommandGet get;
-        ArrayList<String> files;
+        boolean searchPartition3 = false;
 
-        files = new ArrayList(Arrays.asList(fileManager.getColumnAge(), fileManager.getColumnCpf()));
+        //PARTITION 1
+        get = getPartitionInfo(9700, table, persons);
+        if (get.getStatus() == 0)
+            persons = get.getPersons();
+        else
+            searchPartition3 = true;
 
-        //Execute partition 1 request
-        Connect.send(socker_send_partition1, new DBPartitionCommandPost(files));
+        //PARTITION 2
+        get = getPartitionInfo(9800, table, persons);
+        if (get.getStatus() == 0)
+            persons = get.getPersons();
+        else
+            searchPartition3 = true;
 
-        //Get partition 1  return
-        get = (DBPartitionCommandGet) Connect.receive(socker_send_partition1);
+        //PARTITION 3
+        if (searchPartition3) {
+            get = getPartitionInfo(9900, table, persons);
+            persons = get.getPersons();
+        }
 
-        System.out.println("*****STATUS DBPART1: " + get.getStatus());
-
+        //CREATE PERSON FILES TEMPORARY
+        fileManager.writePersons(persons, table);
     }
 
-    public static void updateDBPartitions() {
+    public static DBPartitionCommandGet getPartitionInfo(int port, String table, ArrayList<Person> persons) throws IOException {
+        DBPartitionCommandPost postPartition;
+        DBPartitionCommandGet get;
 
+        socker_send_partition = new Socket("localhost", port);
+        postPartition = new DBPartitionCommandPost(getPartitionsInfo, table, persons);
+        Connect.send(socker_send_partition, postPartition);
+        get = (DBPartitionCommandGet) Connect.receive(socker_send_partition);
+
+        return get;
     }
 
 }

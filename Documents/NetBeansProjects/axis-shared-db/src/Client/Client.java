@@ -40,7 +40,7 @@ public class Client {
         //post.update("Person", new ArrayList(Arrays.asList("35", "cpfRenanVelho", "REVelho")), new Where("name.txt","re2"));
         //post.delete("Person", null);
         post.select("Person", null);
-        //post.insert("Person", new ArrayList(Arrays.asList("50", "cpfm", "Marcilio")));
+        //post.insert("Person", new ArrayList(Arrays.asList("20", "cpfREnan", "REnan")));
 
         //Sending commands
         Connect.send(socket, post);
