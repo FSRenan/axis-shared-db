@@ -19,7 +19,6 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- *
  * @author rferreira
  */
 
@@ -73,7 +72,7 @@ public class FileManager implements Serializable {
                 fw.close();
             }
         } catch (IOException ex) {
-            System.out.println("*FileManager: writeInsert failed >> ERROR: " + ex);
+            System.err.println("*FileManager: writeInsert failed >> ERROR: " + ex);
         }
     }
 
@@ -107,38 +106,72 @@ public class FileManager implements Serializable {
         return persons;
     }
 
+    //Return all the persons in the table Person
+    public ArrayList<Person> getPersonsAdicionalPartitionsInfo(String table, ArrayList<Person> persons) {
+        List<String> fileNames = fileInfo.getFileNames(table);
+
+        for (int i = 0; i < fileNames.size(); i++) {
+            try {
+                FileReader fileReader = new FileReader(fileInfo.getFilePath(table, fileNames.get(i)));
+                BufferedReader readFile = new BufferedReader(fileReader);
+
+                addPersonInfoToArray(persons, readFile, fileNames.get(i));
+
+                fileReader.close();
+            } catch (IOException ex) {
+                System.out.println("*FileManager: readSelect failed >> ERROR: " + ex);
+            }
+        }
+        return persons;
+    }
+
     //Add person info in array
     public void addPersonInfoToArray(ArrayList<Person> persons, BufferedReader readFile, String fileName) {
         int indexPerson = 0;
-
+        Person person;
         try {
             String line = readFile.readLine();
 
             while (line != null) {
                 switch (fileName) {
                     case columnAge:
-
-                        Person person = new Person();
-                        person.setAge(Integer.parseInt(line));
-                        persons.add(indexPerson, person);
+                        if (persons.size() > indexPerson)
+                            persons.get(indexPerson).setAge(Integer.parseInt(line));
+                        else {
+                            person = new Person();
+                            person.setAge(Integer.parseInt(line));
+                            persons.add(indexPerson, person);
+                        }
                         break;
                     case columnCpf:
-                        persons.get(indexPerson).setCpf(line);
+                        if (persons.size() > indexPerson)
+                            persons.get(indexPerson).setCpf(line);
+                        else {
+                            person = new Person();
+                            person.setCpf(line);
+                            persons.add(indexPerson, person);
+                        }
                         break;
                     case columnName:
-                        persons.get(indexPerson).setName(line);
+                        if (persons.size() > indexPerson)
+                            persons.get(indexPerson).setName(line);
+                        else {
+                            person = new Person();
+                            person.setName(line);
+                            persons.add(indexPerson, person);
+                        }
                         break;
                 }
                 line = readFile.readLine();
                 indexPerson++;
             }
         } catch (IOException ex) {
-            System.out.println("*FileManager: addPersonInfoToArray failed >> ERROR: " + ex);
+            System.err.println("*FileManager: addPersonInfoToArray failed >> ERROR: " + ex);
         }
 
     }
-    
-   //Clean all the files
+
+    //Clean all the files
     public void cleanFiles(String table) {
         try {
             List<String> fileNames = fileInfo.getFileNames(table);
@@ -149,7 +182,7 @@ public class FileManager implements Serializable {
                 fw.close();
             }
         } catch (IOException ex) {
-            System.out.println("*FileManager: writeInsert failed >> ERROR: " + ex);
+            System.err.println("*FileManager: writeInsert failed >> ERROR: " + ex);
         }
     }
 
@@ -164,5 +197,10 @@ public class FileManager implements Serializable {
     public String getColumnName() {
         return columnName;
     }
+
+    public FileInfo getFileInfo() {
+        return fileInfo;
+    }
+
 
 }
