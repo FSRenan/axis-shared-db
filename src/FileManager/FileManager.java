@@ -8,11 +8,7 @@ package FileManager;
 import Connection.Where;
 
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Serializable;
+import java.io.*;
 import java.util.ArrayList;
 
 import java.util.Arrays;
@@ -21,34 +17,32 @@ import java.util.List;
 /**
  * @author rferreira
  */
-
-
 public class FileManager implements Serializable {
 
     private FileInfo fileInfo = new FileInfo();
-    private final String columnAge = "age.txt";
-    private final String columnCpf = "cpf.txt";
-    private final String columnName = "name.txt";
+    private final String COLUMN_AGE = "age.txt";
+    private final String COLUMN_CPF = "cpf.txt";
+    private final String COLUMN_NAME = "name.txt";
 
     //Update values
     public ArrayList<Person> updatePerson(String table, ArrayList<String> values, Where where) {
         ArrayList<Person> persons = getPersons(table);
         switch (where.getColumn()) {
-            case columnAge:
+            case COLUMN_AGE:
                 for (int i = 0; i < persons.size(); i++) {
                     if (persons.get(i).getAge() == Integer.parseInt(where.getValue())) {
                         persons.set(i, new Person(Integer.parseInt(values.get(0)), values.get(1), values.get(2)));
                     }
                 }
                 break;
-            case columnCpf:
+            case COLUMN_CPF:
                 for (int i = 0; i < persons.size(); i++) {
                     if (persons.get(i).getCpf().equals(where.getValue())) {
                         persons.set(i, new Person(Integer.parseInt(values.get(0)), values.get(1), values.get(2)));
                     }
                 }
                 break;
-            case columnName:
+            case COLUMN_NAME:
                 for (int i = 0; i < persons.size(); i++) {
                     if (persons.get(i).getName().equals(where.getValue())) {
                         persons.set(i, new Person(Integer.parseInt(values.get(0)), values.get(1), values.get(2)));
@@ -98,9 +92,31 @@ public class FileManager implements Serializable {
 
                 addPersonInfoToArray(persons, readFile, fileNames.get(i));
 
+                readFile.close();
                 fileReader.close();
             } catch (IOException ex) {
                 System.out.println("*FileManager: readSelect failed >> ERROR: " + ex);
+            }
+        }
+        return persons;
+    }
+
+    //Return all the persons selected with where
+    public ArrayList<Person> getPersons(String table, Where where) {
+        ArrayList<Person> persons = getPersons(table);
+
+        if (where != null) {
+            //Remove valores do array pela condicao do WHERE
+            switch (where.getColumn()) {
+                case COLUMN_AGE:
+                    persons.removeIf(person -> (person.getAge() != Integer.parseInt(where.getValue())));
+                    break;
+                case COLUMN_CPF:
+                    persons.removeIf(person -> (!person.getCpf().equalsIgnoreCase(where.getValue())));
+                    break;
+                case COLUMN_NAME:
+                    persons.removeIf(person -> (!person.getName().equalsIgnoreCase(where.getValue())));
+                    break;
             }
         }
         return persons;
@@ -117,6 +133,7 @@ public class FileManager implements Serializable {
 
                 addPersonInfoToArray(persons, readFile, fileNames.get(i));
 
+                readFile.close();
                 fileReader.close();
             } catch (IOException ex) {
                 System.out.println("*FileManager: readSelect failed >> ERROR: " + ex);
@@ -134,7 +151,7 @@ public class FileManager implements Serializable {
 
             while (line != null) {
                 switch (fileName) {
-                    case columnAge:
+                    case COLUMN_AGE:
                         if (persons.size() > indexPerson)
                             persons.get(indexPerson).setAge(Integer.parseInt(line));
                         else {
@@ -143,7 +160,7 @@ public class FileManager implements Serializable {
                             persons.add(indexPerson, person);
                         }
                         break;
-                    case columnCpf:
+                    case COLUMN_CPF:
                         if (persons.size() > indexPerson)
                             persons.get(indexPerson).setCpf(line);
                         else {
@@ -152,7 +169,7 @@ public class FileManager implements Serializable {
                             persons.add(indexPerson, person);
                         }
                         break;
-                    case columnName:
+                    case COLUMN_NAME:
                         if (persons.size() > indexPerson)
                             persons.get(indexPerson).setName(line);
                         else {
@@ -186,16 +203,55 @@ public class FileManager implements Serializable {
         }
     }
 
+    //Create DATA folder
+    public void createDataFolder(String table) throws IOException {
+        String tablePath = fileInfo.getPath() + File.separator + table;
+
+        new File(tablePath).mkdirs();
+        createDataFiles(tablePath, "age.txt");
+        createDataFiles(tablePath, "cpf.txt");
+        createDataFiles(tablePath, "name.txt");
+    }
+
+    //Create DATA Files
+    public void createDataFiles(String table, String column) throws IOException {
+        File file = new File(table + File.separator + column);
+
+        if (!file.exists()) {
+            file.getParentFile().mkdirs();
+            file.createNewFile();
+        }
+    }
+
+    //Delete DATA folder
+    public void deleteDataFolder(String table) {
+        String path = fileInfo.getPath() + File.separator + table;
+        File folder = new File(path);
+
+        deleteDir(folder);
+    }
+
+    void deleteDir(File file) {
+        File[] contents = file.listFiles();
+        if (contents != null) {
+            for (File f : contents) {
+                deleteDir(f);
+            }
+        }
+        if (!file.delete()) System.err.println("deleteDir failed: path " + file.getAbsolutePath());
+
+    }
+
     public String getColumnAge() {
-        return columnAge;
+        return COLUMN_AGE;
     }
 
     public String getColumnCpf() {
-        return columnCpf;
+        return COLUMN_CPF;
     }
 
     public String getColumnName() {
-        return columnName;
+        return COLUMN_NAME;
     }
 
     public FileInfo getFileInfo() {

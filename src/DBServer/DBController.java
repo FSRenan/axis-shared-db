@@ -37,12 +37,6 @@ public class DBController {
         try {
             controller_socker_receive = new ServerSocket(9600);
             System.out.println("BDServer Created");
-
-            //Conection to send info
-            //socker_send_partition1 = new Socket("localhost", 9700);
-            //PARTICOES NOVA
-            //socker_send_partition2 = new Socket("localhost", 9800);
-            //socker_send_partition3 = new Socket("localhost", 9900);
         } catch (IOException ex) {
             System.err.println("*DBServer: Creating server failed >> ERROR: " + ex);
             ex.printStackTrace();
@@ -63,6 +57,9 @@ public class DBController {
             //Receive Client request
             post = (Post) Connect.receive(client_socket);
 
+            //Create temporary folder
+            fileManager.createDataFolder(post.getTable());
+
             //Create files from partitions
             checkDBPartitions(post.getTable());
 
@@ -70,13 +67,13 @@ public class DBController {
             dbActions.execute(post, get);
 
             //Update Partitions
-            updateDBPartitions(post.getTable());    
-            
+            updateDBPartitions(post.getTable());
+
             //Delete Controller Files Buffer
-            
+            fileManager.deleteDataFolder(post.getTable());
+
             //Setting Return
             Connect.send(client_socket, get);
-
         }
     }
 
@@ -99,20 +96,34 @@ public class DBController {
         boolean searchPartition3 = false;
 
         //PARTITION 1
-        get = sendPartitionInfo(GET_PARTITIONS_INFO, PORT_PARTITION1, table, persons);
-        if (get.getStatus() == 0) {
-            persons = get.getPersons();
-        } else {
+        try {
+            get = sendPartitionInfo(GET_PARTITIONS_INFO, PORT_PARTITION1, table, persons);
+            if (get.getStatus() == 0) {
+                persons = get.getPersons();
+            } else {
+                searchPartition3 = true;
+            }
+
+        } catch (Exception e) {
+            System.out.println("*DBController > Ocorreu um erro ao obter as informações da PARTIÇÃO 1");
+            e.printStackTrace();
             searchPartition3 = true;
         }
 
         //PARTITION 2
-        get = sendPartitionInfo(GET_PARTITIONS_INFO, PORT_PARTITION2, table, persons);
-        if (get.getStatus() == 0) {
-            persons = get.getPersons();
-        } else {
+        try {
+            get = sendPartitionInfo(GET_PARTITIONS_INFO, PORT_PARTITION2, table, persons);
+            if (get.getStatus() == 0) {
+                persons = get.getPersons();
+            } else {
+                searchPartition3 = true;
+            }
+        } catch (Exception e) {
+            System.out.println("*DBController > Ocorreu um erro ao obter as informações da PARTIÇÃO 2");
+            e.printStackTrace();
             searchPartition3 = true;
         }
+
 
         //PARTITION 3
         if (searchPartition3) {
@@ -129,13 +140,26 @@ public class DBController {
         DBPartitionCommandGet get;
 
         //PARTITION 1
-        get = sendPartitionInfo(UPDATE_PARTITIONS_INFO, PORT_PARTITION1, table, persons);
+        try {
+            get = sendPartitionInfo(UPDATE_PARTITIONS_INFO, PORT_PARTITION1, table, persons);
+        } catch (Exception e) {
+            System.out.println("*DBController > Ocorreu um erro ao atualizar a PARTIÇÃO 1");
+            e.printStackTrace();
+        }
         //PARTITION 2
-        get = sendPartitionInfo(UPDATE_PARTITIONS_INFO, PORT_PARTITION2, table, persons);
+        try {
+            get = sendPartitionInfo(UPDATE_PARTITIONS_INFO, PORT_PARTITION2, table, persons);
+        } catch (Exception e) {
+            System.out.println("*DBController > Ocorreu um erro ao atualizar a PARTIÇÃO 2");
+            e.printStackTrace();
+        }
         //PARTITION 3
-        get = sendPartitionInfo(UPDATE_PARTITIONS_INFO, PORT_PARTITION3, table, persons);
-        
-        
+        try {
+            get = sendPartitionInfo(UPDATE_PARTITIONS_INFO, PORT_PARTITION3, table, persons);
+        } catch (Exception e) {
+            System.out.println("*DBController > Ocorreu um erro ao atualizar a PARTIÇÃO 3");
+            e.printStackTrace();
+        }
     }
 
     public static DBPartitionCommandGet sendPartitionInfo(int command, int port, String table, ArrayList<Person> persons) throws IOException {
@@ -149,7 +173,7 @@ public class DBController {
 
         //Verificar se n da pau****************
         socker_send_partition.close();
-        
+
         return get;
     }
 

@@ -4,6 +4,7 @@ import Connection.Get;
 import Connection.Post;
 import FileManager.FileManager;
 import FileManager.Person;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -11,7 +12,6 @@ import java.util.Arrays;
 
 
 /**
- *
  * @author rferreira
  */
 public class DBActions implements Serializable {
@@ -27,7 +27,6 @@ public class DBActions implements Serializable {
 
         switch (post.getCommand()) {
             case const_Insert:
-                System.out.println("entrou insert");
                 insert(post, get);
                 break;
             case const_Select:
@@ -53,21 +52,21 @@ public class DBActions implements Serializable {
     //Select
     public void select(Post post, Get get) {
         String select = "";
-        ArrayList<Person> persons = fileManager.getPersons(post.getTable());
+
+        ArrayList<Person> persons = fileManager.getPersons(post.getTable(), post.getWhere());
 
         for (Person person : persons) {
             select += "*******************";
             select += person.getAllInfo();
         }
-        get.setMsg(select);
 
+        get.setMsg(select);
     }
 
     public void update(Post post, Get get) {
-
         ArrayList<Person> persons = fileManager.updatePerson(post.getTable(), post.getValues(), post.getWhere());
         fileManager.writePersons(persons, post.getTable());
-        
+
         get.setMsg("\n **SUCESSO NO UPDATE");
     }
 
