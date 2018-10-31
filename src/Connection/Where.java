@@ -3,18 +3,23 @@ package Connection;
 import java.io.Serializable;
 
 /**
- *
  * @author Renan Ferreira
  */
-public class Where implements Serializable{
+public class Where implements Serializable {
 
     private String column;
     private String value;
 
+    public Where(String where) {
+        String arrayAux[];
+        arrayAux = where.split("=");
+        this.column = arrayAux[0];
+        this.value = arrayAux[1];
+    }
+
     public Where(String column, String value) {
         this.column = column;
         this.value = value;
-
     }
 
     public String getColumn() {

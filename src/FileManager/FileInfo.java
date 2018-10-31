@@ -34,6 +34,8 @@ public class FileInfo implements Serializable {
             for (Path file : stream) {
                 fileNames.add(file.getFileName() + "");
             }
+            stream.close();
+
         } catch (IOException ex) {
             System.err.println("*FileManager: getFileNames failed >> ERROR: " + ex);
         }

@@ -61,7 +61,8 @@ public class DBPartition2 {
                 }
                 //Update partition info
                 else if (post.getPartitionRequest() == updatePartitionsInfo) {
-
+                    persons = post.getPersons();
+                    partitionActions.writePersons(persons, post.getTable(), partition);
                 }
             } else {
                 get.setStatus(1);

@@ -3,9 +3,15 @@ package DBServer.Partitions;
 import DBServer.CRUD.DBActions;
 import FileManager.*;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+/**
+ * @author rferreira
+ */
 public class DBPartitionActions extends FileManager {
     private final FileManager fileManager = new FileManager();
 
@@ -36,4 +42,32 @@ public class DBPartitionActions extends FileManager {
         return columns == 2;
 
     }
+
+    public void writePersons(ArrayList<Person> persons, String table, int partition) {
+
+        boolean firstPersonInserted = false;
+        ArrayList<String> values = new ArrayList<>();
+
+        if (persons.isEmpty()) {
+            cleanFiles(table);
+        } else {
+            //Só grava o ultimo, o false deve estar no primeiro
+            for (Person person : persons) {
+                switch (partition) {
+                    case 1:
+                        values = new ArrayList(Arrays.asList(person.getAge() + "", person.getCpf()));
+                        break;
+                    case 2:
+                        values = new ArrayList(Arrays.asList(person.getAge() + "", person.getName()));
+                        break;
+                    case 3:
+                        values = new ArrayList(Arrays.asList(person.getCpf() + "", person.getName()));
+                        break;
+                }
+                writeInsert(table, values, firstPersonInserted);
+                firstPersonInserted = true;
+            }
+        }
+    }
+
 }
