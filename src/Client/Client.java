@@ -40,7 +40,6 @@ public class Client {
         boolean clientEnable = true;
         String command = "";
 
-
         //Set BLUE color to println
         System.out.print(ANSI_BLUE);
         System.out.println("******************** BEM-VINDO AO AXIS-SHARED-DB ******************** ");
@@ -53,40 +52,43 @@ public class Client {
             scanner = new Scanner(System.in);
 
             System.out.println("DIGITE A QUERY E PRESSIONE ENTER: <info>");
-            command = scanner.next();
+            command = scanner.nextLine();
 
             switch (command) {
                 //Select command
                 case COMMAND_SELECT:
                     System.out.print(">select > Deseja utilizar WHERE? <S/N>");
-                    command = scanner.next();
+                    command = scanner.nextLine();
 
                     if (command.equalsIgnoreCase("S")) {
                         //Receive WHERE
-                        System.out.print(">select > Digite o WHERE: (Exemplo <Idade.txt=12>)");
-                        command = scanner.next();
-
+                        System.out.print(">select > Digite o WHERE: (Exemplo <age=12>)");
+                        command = scanner.nextLine();
+                        command = command.replaceAll("\\s+", "");
                         where = new Where(command);
                     }
                     post.select("Person", where);
                     break;
                 //Insert command
                 case COMMAND_INSERT:
-                    System.out.print(">insert > Digite o insert: (Exemplo <idade, cpf, nome>)");
-                    command = scanner.next();
+                    System.out.print(">insert > Digite o insert: (Exemplo <age, cpf, name>)");
+                    command = scanner.nextLine();
+                    command = command.replaceAll("\\s+", "");
                     arrayAux = command.split(",");
                     post.insert("Person", new ArrayList(Arrays.asList(arrayAux[0], arrayAux[1], arrayAux[2])));
                     break;
                 //Update command
                 case COMMAND_UPDATE:
                     //Receive WHERE
-                    System.out.print(">update > Digite o WHERE: (Exemplo <Idade.txt=12>)");
-                    command = scanner.next();
+                    System.out.print(">update > Digite o WHERE: (Exemplo <age=12>)");
+                    command = scanner.nextLine();
+                    command = command.replaceAll("\\s+", "");
                     where = new Where(command);
 
                     //Receive fields to update
-                    System.out.print(">update > Digite o valor dos novos campos: (Exemplo <idade, cpf, nome>)");
-                    command = scanner.next();
+                    System.out.print(">update > Digite o valor dos novos campos: (Exemplo <age, cpf, name>)");
+                    command = scanner.nextLine();
+                    command = command.replaceAll("\\s+", "");
                     arrayAux = command.split(",");
 
                     post.update("Person", new ArrayList(Arrays.asList(arrayAux[0], arrayAux[1], arrayAux[2])), where);
@@ -94,15 +96,16 @@ public class Client {
                 //Delete command
                 case COMMAND_DELETE:
                     System.out.print("> delete > Esse comando vai apagar todas as informações já salvas! Deseja continuar? <S/N>");
-                    command = scanner.next();
+                    command = scanner.nextLine();
 
-                    if (command.equalsIgnoreCase("S"))
+                    if (command.equalsIgnoreCase("S")) {
                         post.delete("Person", null);
-                    else
+                    } else {
                         command = COMMAND_DEFAULT;
+                    }
                     break;
                 case COMMAND_INFO:
-                    System.err.println("COMANDOS PERMITIDOS: <select>|<insert>|<update>|<delete> \n <stop> PARA PARAR A EXECUÇÃO");
+                    System.err.println("COMANDOS PERMITIDOS: <select>|<insert>|<update>|<delete> \n <stop> PARA PARAR A EXECUÇÃO (TODOS OS COMANDOS EM MINÚSCULO)");
                     command = COMMAND_DEFAULT;
                     break;
                 case COMMAND_STOP:

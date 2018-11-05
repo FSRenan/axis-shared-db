@@ -13,12 +13,13 @@ public class Where implements Serializable {
     public Where(String where) {
         String arrayAux[];
         arrayAux = where.split("=");
-        this.column = arrayAux[0];
+        this.column = arrayAux[0] + ".txt";
         this.value = arrayAux[1];
     }
 
     public Where(String column, String value) {
-        this.column = column;
+
+        this.column = column + ".txt";
         this.value = value;
     }
 
