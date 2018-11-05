@@ -101,13 +101,13 @@ public class DBController {
             if (get.getStatus() == 0) {
                 persons = get.getPersons();
             } else {
-                searchPartition3 = true;
+                searchPartition3 = !searchPartition3;
             }
 
         } catch (Exception e) {
             System.out.println("*DBController > Ocorreu um erro ao obter as informações da PARTIÇÃO 1");
             e.printStackTrace();
-            searchPartition3 = true;
+            searchPartition3 = !searchPartition3;
         }
 
         //PARTITION 2
@@ -116,12 +116,12 @@ public class DBController {
             if (get.getStatus() == 0) {
                 persons = get.getPersons();
             } else {
-                searchPartition3 = true;
+                searchPartition3 = !searchPartition3;
             }
         } catch (Exception e) {
             System.out.println("*DBController > Ocorreu um erro ao obter as informações da PARTIÇÃO 2");
             e.printStackTrace();
-            searchPartition3 = true;
+            searchPartition3 = !searchPartition3;
         }
 
 
