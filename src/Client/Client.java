@@ -23,7 +23,6 @@ public class Client {
 
     //CONSTRAINTS
     public static final String ANSI_BLUE = "\u001B[34m";
-    public static final String ANSI_WHITE = "\u001B[37m";
     public static final String ANSI_RESET = "\u001B[0m";
 
     private static String ipServer = "localhost";
@@ -109,8 +108,16 @@ public class Client {
                     }
                     break;
                 case COMMAND_INFO:
-                    System.err.println("COMANDOS PERMITIDOS: <select>|<insert>|<update>|<delete> \n <stop> PARA PARAR A EXECUÇÃO (TODOS OS COMANDOS EM MINÚSCULO)");
+                    System.out.print(ANSI_BLUE);
+                    System.out.println(""
+                            + "COMANDOS PERMITIDOS: \n\n"
+                            + "<select>     Retorna todas informações do banco\n"
+                            + "<insert>     Insere uma informação no banco\n"
+                            + "<update>     Atualiza uma informação no banco\n"
+                            + "<delete>     Deleta todos os dados do banco\n"
+                            + "<stop>       Para execução\n\n");
                     command = COMMAND_DEFAULT;
+                    System.out.println(ANSI_RESET);
                     break;
                 case COMMAND_STOP:
                     clientEnable = false;
