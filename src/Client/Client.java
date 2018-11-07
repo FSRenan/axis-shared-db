@@ -5,6 +5,8 @@ import Connection.Connect;
 import Connection.Get;
 import Connection.Post;
 import Connection.Where;
+import static DBServer.DBController.ANSI_BLUE;
+import static DBServer.DBController.ANSI_RESET;
 
 import java.net.Socket;
 import java.io.IOException;
@@ -21,9 +23,10 @@ public class Client {
 
     //CONSTRAINTS
     public static final String ANSI_BLUE = "\u001B[34m";
-    public static final String ANSI_WHITE = "\u001B[37m";
     public static final String ANSI_RESET = "\u001B[0m";
 
+    private static String ipServer = "localhost";
+    private static final int portServer = 9600;
     private static final String COMMAND_SELECT = "select";
     private static final String COMMAND_INSERT = "insert";
     private static final String COMMAND_UPDATE = "update";
@@ -43,7 +46,7 @@ public class Client {
         //Set BLUE color to println
         System.out.print(ANSI_BLUE);
         System.out.println("******************** BEM-VINDO AO AXIS-SHARED-DB ******************** ");
-
+        insertServerIP();
         //Set RESET color to println
         System.out.print(ANSI_RESET);
 
@@ -105,8 +108,16 @@ public class Client {
                     }
                     break;
                 case COMMAND_INFO:
-                    System.err.println("COMANDOS PERMITIDOS: <select>|<insert>|<update>|<delete> \n <stop> PARA PARAR A EXECUÇÃO (TODOS OS COMANDOS EM MINÚSCULO)");
+                    System.out.print(ANSI_BLUE);
+                    System.out.println(""
+                            + "COMANDOS PERMITIDOS: \n\n"
+                            + "<select>     Retorna todas informações do banco\n"
+                            + "<insert>     Insere uma informação no banco\n"
+                            + "<update>     Atualiza uma informação no banco\n"
+                            + "<delete>     Deleta todos os dados do banco\n"
+                            + "<stop>       Para execução\n\n");
                     command = COMMAND_DEFAULT;
+                    System.out.println(ANSI_RESET);
                     break;
                 case COMMAND_STOP:
                     clientEnable = false;
@@ -119,7 +130,7 @@ public class Client {
             }
 
             if (!command.equalsIgnoreCase(COMMAND_DEFAULT)) {
-                socket = new Socket("localhost", 9600);
+                socket = new Socket(ipServer, portServer);
                 //Sending commands
                 Connect.send(socket, post);
                 //Get BDServer return
@@ -130,5 +141,20 @@ public class Client {
             }
 
         }
+    }
+
+    public static void insertServerIP() {
+        String ip;
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println(">> ENTER SERVER IP");
+
+        System.out.print("SERVER> localhost: ");
+        ip = scanner.nextLine();
+        if (!ip.isEmpty()) {
+            ipServer = ip;
+        }
+
+        System.out.println("> IP \nSERVER> " + ipServer + ":" + portServer);
     }
 }

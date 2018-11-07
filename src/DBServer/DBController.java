@@ -1,5 +1,7 @@
 package DBServer;
 
+import static Client.Client.ANSI_BLUE;
+import static Client.Client.ANSI_RESET;
 import Connection.Connect;
 import Connection.Get;
 import Connection.Post;
@@ -13,6 +15,8 @@ import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Scanner;
+import javax.swing.JOptionPane;
 
 /**
  * @author rferreira
@@ -25,18 +29,31 @@ public class DBController {
 
     private static final FileManager fileManager = new FileManager();
 
-    //Constraints
+    //CONSTRAINTS
+    public static final String ANSI_BLUE = "\u001B[34m";
+    public static final String ANSI_WHITE = "\u001B[37m";
+    public static final String ANSI_RESET = "\u001B[0m";
+
     private static final int GET_PARTITIONS_INFO = 0;
     private static final int UPDATE_PARTITIONS_INFO = 1;
 
-    private static final int PORT_PARTITION1 = 9700;
-    private static final int PORT_PARTITION2 = 9800;
-    private static final int PORT_PARTITION3 = 9900;
+    private static boolean inputIPs = false;
+    private static String ip_partition1 = "localhost";
+    private static String ip_partition2 = "localhost";
+    private static String ip_partition3 = "localhost";
+    private static int port_partition1 = 9700;
+    private static int port_partition2 = 9800;
+    private static int port_partition3 = 9900;
 
     public DBController() {
         try {
             controller_socker_receive = new ServerSocket(9600);
-            System.out.println("BDServer Created");
+            //Set BLUE color to println
+            System.out.print(ANSI_BLUE);
+            System.out.println("******************** BDSERVER ******************** ");
+            insertPartitionsIP();
+            //Set RESET color to println
+            System.out.print(ANSI_RESET);
         } catch (IOException ex) {
             System.err.println("*DBServer: Creating server failed >> ERROR: " + ex);
             ex.printStackTrace();
@@ -52,7 +69,6 @@ public class DBController {
         Post post;
         Get get = new Get();
 
-        //checkDBPartitions();
         while (connect()) {
             //Receive Client request
             post = (Post) Connect.receive(client_socket);
@@ -97,7 +113,7 @@ public class DBController {
 
         //PARTITION 1
         try {
-            get = sendPartitionInfo(GET_PARTITIONS_INFO, PORT_PARTITION1, table, persons);
+            get = sendPartitionInfo(GET_PARTITIONS_INFO, ip_partition1, port_partition1, table, persons);
             if (get.getStatus() == 0) {
                 persons = get.getPersons();
             } else {
@@ -112,7 +128,7 @@ public class DBController {
 
         //PARTITION 2
         try {
-            get = sendPartitionInfo(GET_PARTITIONS_INFO, PORT_PARTITION2, table, persons);
+            get = sendPartitionInfo(GET_PARTITIONS_INFO, ip_partition2, port_partition2, table, persons);
             if (get.getStatus() == 0) {
                 persons = get.getPersons();
             } else {
@@ -124,10 +140,9 @@ public class DBController {
             searchPartition3 = !searchPartition3;
         }
 
-
         //PARTITION 3
         if (searchPartition3) {
-            get = sendPartitionInfo(GET_PARTITIONS_INFO, PORT_PARTITION3, table, persons);
+            get = sendPartitionInfo(GET_PARTITIONS_INFO, ip_partition3, port_partition3, table, persons);
             persons = get.getPersons();
         }
 
@@ -141,40 +156,71 @@ public class DBController {
 
         //PARTITION 1
         try {
-            get = sendPartitionInfo(UPDATE_PARTITIONS_INFO, PORT_PARTITION1, table, persons);
+            get = sendPartitionInfo(UPDATE_PARTITIONS_INFO, ip_partition1, port_partition1, table, persons);
         } catch (Exception e) {
             System.out.println("*DBController > Ocorreu um erro ao atualizar a PARTIÇÃO 1");
             e.printStackTrace();
         }
         //PARTITION 2
         try {
-            get = sendPartitionInfo(UPDATE_PARTITIONS_INFO, PORT_PARTITION2, table, persons);
+            get = sendPartitionInfo(UPDATE_PARTITIONS_INFO, ip_partition2, port_partition2, table, persons);
         } catch (Exception e) {
             System.out.println("*DBController > Ocorreu um erro ao atualizar a PARTIÇÃO 2");
             e.printStackTrace();
         }
         //PARTITION 3
         try {
-            get = sendPartitionInfo(UPDATE_PARTITIONS_INFO, PORT_PARTITION3, table, persons);
+            get = sendPartitionInfo(UPDATE_PARTITIONS_INFO, ip_partition3, port_partition3, table, persons);
         } catch (Exception e) {
             System.out.println("*DBController > Ocorreu um erro ao atualizar a PARTIÇÃO 3");
             e.printStackTrace();
         }
     }
 
-    public static DBPartitionCommandGet sendPartitionInfo(int command, int port, String table, ArrayList<Person> persons) throws IOException {
+    public static DBPartitionCommandGet sendPartitionInfo(int command, String ip, int port, String table, ArrayList<Person> persons) throws IOException {
         DBPartitionCommandPost postPartition;
         DBPartitionCommandGet get;
 
-        socker_send_partition = new Socket("localhost", port);
+        socker_send_partition = new Socket(ip, port);
+
         postPartition = new DBPartitionCommandPost(command, table, persons);
         Connect.send(socker_send_partition, postPartition);
         get = (DBPartitionCommandGet) Connect.receive(socker_send_partition);
 
-        //Verificar se n da pau****************
         socker_send_partition.close();
 
         return get;
+    }
+
+    public static void insertPartitionsIP() {
+        String ip;
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println(">> ENTER IP OF PARTITIONS");
+
+        System.out.print("Partition1> localhost: ");
+        ip = scanner.nextLine();
+        if (!ip.isEmpty()) {
+            ip_partition1 = ip;
+        }
+
+        System.out.print("Partition2> localhost: ");
+        ip = scanner.nextLine();
+        if (!ip.isEmpty()) {
+            ip_partition2 = ip;
+        }
+
+        System.out.print("Partition3> localhost: ");
+        ip = scanner.nextLine();
+        if (!ip.isEmpty()) {
+            ip_partition3 = ip;
+        }
+
+        System.out.println(
+                "> IPs: "
+                + "\nPartition1> " + ip_partition1 + ":" + port_partition1
+                + "\nPartition2> " + ip_partition2 + ":" + port_partition2
+                + "\nPartition3> " + ip_partition3 + ":" + port_partition3);
     }
 
 }
