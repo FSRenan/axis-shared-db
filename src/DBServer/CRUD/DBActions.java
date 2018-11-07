@@ -16,6 +16,9 @@ import java.util.Arrays;
  */
 public class DBActions implements Serializable {
 
+    //Tabelas sao pastas, colunas sao arquivos, backp sera copiar arquivo, na hr
+    //de recuperar ele copia
+
     //Constraints
     private final int const_Insert = 0;
     private final int const_Select = 1;
@@ -43,8 +46,6 @@ public class DBActions implements Serializable {
 
     //Insert Age, cpf, name
     public void insert(Post post, Get get) {
-        //Tabelas sao pastas, colunas sao arquivos, backp sera copiar arquivo, na hr
-        //de recuperar ele copia
         fileManager.writeInsert(post.getTable(), post.getValues(), true);
         get.setMsg("\n **SUCESSO NO INSERT");
     }

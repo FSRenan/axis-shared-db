@@ -61,7 +61,7 @@ public class DBPartitionActions extends FileManager {
                         values = new ArrayList(Arrays.asList(person.getAge() + "", person.getName()));
                         break;
                     case 3:
-                        values = new ArrayList(Arrays.asList(person.getCpf() + "", person.getName()));
+                        values = new ArrayList(Arrays.asList(person.getCpf(), person.getName()));
                         break;
                 }
                 writeInsert(table, values, firstPersonInserted);

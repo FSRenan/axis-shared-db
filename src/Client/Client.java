@@ -5,6 +5,7 @@ import Connection.Connect;
 import Connection.Get;
 import Connection.Post;
 import Connection.Where;
+
 import static DBServer.DBController.ANSI_BLUE;
 import static DBServer.DBController.ANSI_RESET;
 
@@ -110,12 +111,12 @@ public class Client {
                 case COMMAND_INFO:
                     System.out.print(ANSI_BLUE);
                     System.out.println(""
-                            + "COMANDOS PERMITIDOS: \n\n"
+                            + "\nCOMANDOS PERMITIDOS:\n"
                             + "<select>     Retorna todas informações do banco\n"
                             + "<insert>     Insere uma informação no banco\n"
                             + "<update>     Atualiza uma informação no banco\n"
                             + "<delete>     Deleta todos os dados do banco\n"
-                            + "<stop>       Para execução\n\n");
+                            + "<stop>       Para execução\n");
                     command = COMMAND_DEFAULT;
                     System.out.println(ANSI_RESET);
                     break;
@@ -139,7 +140,6 @@ public class Client {
 
                 socket.close();
             }
-
         }
     }
 
@@ -147,7 +147,7 @@ public class Client {
         String ip;
         Scanner scanner = new Scanner(System.in);
 
-        System.out.println(">> ENTER SERVER IP");
+        System.out.println("\n>> ENTER SERVER IP");
 
         System.out.print("SERVER> localhost: ");
         ip = scanner.nextLine();
@@ -155,6 +155,7 @@ public class Client {
             ipServer = ip;
         }
 
-        System.out.println("> IP \nSERVER> " + ipServer + ":" + portServer);
+        System.out.println("\nSERVER IP> " + ipServer + ":" + portServer);
+        System.out.println("\n");
     }
 }
