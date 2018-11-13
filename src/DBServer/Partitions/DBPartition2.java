@@ -16,6 +16,11 @@ public class DBPartition2 {
     static ServerSocket server_socker_;
     static Socket client_socket;
 
+    //CONSTRAINTS
+    public static final String ANSI_BLUE = "\u001B[34m";
+    public static final String ANSI_RESET = "\u001B[0m";
+    public static final int PORT = 9800;
+
     //Request status
     private static final int getPartitionsInfo = 0;
     private static final int updatePartitionsInfo = 1;
@@ -27,8 +32,11 @@ public class DBPartition2 {
 
     public DBPartition2() {
         try {
-            server_socker_ = new ServerSocket(9800);
-            System.out.println("DBPartition2 Created");
+            server_socker_ = new ServerSocket(PORT);
+            System.out.print(ANSI_BLUE);
+            System.out.println("******************** DBPARTITION2 ******************** ");
+            System.out.print(ANSI_RESET);
+            System.out.println("\n\n*Running...");
 
         } catch (IOException ex) {
             System.err.println("*DBPartition2: Creating server failed >> ERROR: " + ex);
