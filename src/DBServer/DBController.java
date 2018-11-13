@@ -76,14 +76,17 @@ public class DBController {
             //Create temporary folder
             fileManager.createDataFolder(post.getTable());
 
-            //Create files from partitions
-            checkDBPartitions(post.getTable());
+            //Create files from partitions executing
+            checkDBPartitionsWorking(post.getTable());
+
+            //Sync partition with some previous error
+            updateDBPartitions(post.getTable(), true);
 
             //Execute Client request
             dbActions.execute(post, get);
 
             //Update Partitions
-            updateDBPartitions(post.getTable());
+            updateDBPartitions(post.getTable(), false);
 
             //Delete Controller Files Buffer
             fileManager.deleteDataFolder(post.getTable());
@@ -106,41 +109,50 @@ public class DBController {
         return ret;
     }
 
-    public static void checkDBPartitions(String table) throws IOException {
+    public static void checkDBPartitionsWorking(String table) throws IOException {
         ArrayList<Person> persons = new ArrayList();
         DBPartitionCommandGet get;
-        boolean searchPartition3 = false;
 
         //CHECK PARTITIONS INFORMATION AND ADD IN persons ARRAY
         for (int i = 0; i < PARTITIONS_NUMBER; i++) {
             try {
-                get = sendPartitionInfo(GET_PARTITIONS_INFO, partitions.get(i).getIp(), partitions.get(i).getPort(), table, persons);
-                if (get.getStatus() == 0) {
-                    persons = get.getPersons();
+                if (!partitions.get(i).isError_partition()) {
+                    get = sendPartitionInfo(GET_PARTITIONS_INFO, partitions.get(i).getIp(), partitions.get(i).getPort(), table, persons);
+                    if (get.getStatus() == 0) {
+                        persons = get.getPersons();
+                    }
+                    System.out.println("*(PARTIÇÃO " + (i + 1) + ")");
                 } else {
-                    searchPartition3 = !searchPartition3;
+                    System.err.println("*DBController > A PARTIÇÃO " + (i + 1) + " estava com problemas, por gentileza verifique as suas informações");
                 }
-
             } catch (Exception e) {
                 System.err.println("*DBController > Ocorreu um erro ao obter as informações da PARTIÇÃO " + (i + 1));
-                searchPartition3 = !searchPartition3;
             }
         }
+        System.out.println("");
 
         //CREATE PERSON FILES TEMPORARY
         fileManager.writePersons(persons, table);
     }
 
-    public static void updateDBPartitions(String table) throws IOException {
+    public static void updateDBPartitions(String table, boolean withError) throws IOException {
         ArrayList<Person> persons = fileManager.getPersons(table);
         DBPartitionCommandGet get;
 
         for (int i = 0; i < PARTITIONS_NUMBER; i++) {
-            try {
-                get = sendPartitionInfo(UPDATE_PARTITIONS_INFO, partitions.get(i).getIp(), partitions.get(i).getPort(), table, persons);
-            } catch (Exception e) {
-                partitions.get(i).setError_partition(true);
-                System.err.println("*DBController > Ocorreu um erro ao atualizar a PARTIÇÃO " + (i + 1));
+            if (partitions.get(i).isError_partition() == withError) {
+                try {
+                    get = sendPartitionInfo(UPDATE_PARTITIONS_INFO, partitions.get(i).getIp(), partitions.get(i).getPort(), table, persons);
+                    //Clean error log
+                    if (withError) {
+                        partitions.get(i).setError_partition(false);
+                        System.out.println("*DBController > A PARTIÇÃO " + (i + 1) + " foi sincronizada\n");
+                    }
+
+                } catch (Exception e) {
+                    partitions.get(i).setError_partition(true);
+                    System.err.println("*DBController > Ocorreu um erro ao atualizar a PARTIÇÃO " + (i + 1) + "\n");
+                }
             }
         }
     }
@@ -190,5 +202,4 @@ public class DBController {
 
         System.out.println("\n");
     }
-
 }
