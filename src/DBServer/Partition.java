@@ -51,7 +51,7 @@ public class Partition {
                 String[] ipAdress;
                 BufferedReader br = new BufferedReader(new FileReader(LOG_FILE));
 
-                while ((line = br.readLine()) != null) {
+                if ((line = br.readLine()) != null) {
                     br.close();
                     ipAdress = line.split(":");
                     return ipAdress[0].equals(ip) && Integer.parseInt(ipAdress[1]) == port;
